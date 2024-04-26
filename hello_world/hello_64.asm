@@ -7,12 +7,12 @@ global start
 section .text
 
     start:
-    mov rax, 4
-    mov rbx, 1
-    mov rcx, msg
-    mov rdx, msgSize
-    int 0x80
     mov rax, 1
-    mov rbx, 0
-    int 0x80
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, msgSize
+    syscall
+    mov rax, 60
+    mov rdi, 0
+    syscall
     ret
