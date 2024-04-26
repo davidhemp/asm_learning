@@ -1,9 +1,10 @@
-section .data
+section .rodata
     SYS_EXIT  equ 60
     EXIT_CODE equ 0
     ZERO_IN_ASCII equ 48
     usageStr db "Please give two integers as inputs", 10
     usageStrSize equ $ -usageStr
+    newLine db "", 10
 
 section .text
     global _start
@@ -32,7 +33,7 @@ _start:
     ;; Sum given intergers and print
     add r10, r11
     mov rax, r10
-    xor r12, r12
+
     call int_to_str
 
 str_to_int:
@@ -44,7 +45,7 @@ l1:
     cmp [rsi], byte 0
     je return
     mov bl, [rsi]
-    sub bl, 48
+    sub bl, ZERO_IN_ASCII
     mul rcx
     add rax, rbx
     inc rsi
@@ -56,7 +57,7 @@ int_to_str:
     xor rdx, rdx
     mov rcx, 10
     div rcx
-    add rdx, 48
+    add rdx, ZERO_IN_ASCII
     add rdx, 0x0
     push rdx
     inc r12
@@ -65,16 +66,25 @@ int_to_str:
     jmp print
     
 print:
-    mov rax, 1
-    mul r12
+    ;; Work out lenght in bytes
+    mov rax, r12
     mov r12, 8
     mul r12
     mov rdx, rax
 
+    ;;print to std out
     mov rax, 1
     mov rdi, 1
     mov rsi, rsp
     syscall
+
+    ;; Just to look cleaner I've added a new line
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, newLine
+    mov rdx, 1
+    syscall
+
     jmp exit
 
 return:
